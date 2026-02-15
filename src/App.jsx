@@ -4,29 +4,19 @@ const VIEWS = { HOME: "home", NEW_GAME: "new_game", ACTIVE: "active", HISTORY: "
 const STORAGE_KEY = "homegame:data";
 
 async function loadData() {
-
   try {
-
-    const raw = localStorage.getItem(STORAGE_KEY);
-
-    if (raw) return JSON.parse(raw);
-
+    const result = await window.storage.get(STORAGE_KEY);
+    if (result && result.value) return JSON.parse(result.value);
   } catch (e) { console.log("No saved data found, starting fresh"); }
-
   return null;
-
 }
 
 async function saveData(data) {
-
   try {
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
+    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+    if (!result) throw new Error("Storage write returned null");
     return true;
-
   } catch (e) { console.error("Failed to save:", e); return false; }
-
 }
 
 function simplifyDebts(players) {
@@ -171,6 +161,7 @@ export default function PokerHomeGame() {
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [profileReturnView, setProfileReturnView] = useState(VIEWS.LEADERBOARD);
+  const [showAbout, setShowAbout] = useState(false);
 
   // Phase 5: Smooth view transitions
   const navigateViewRef = useRef(null);
@@ -312,6 +303,52 @@ export default function PokerHomeGame() {
       }
     });
   }, [pastGames, leaderboardSort]);
+
+  // Export all data as JSON backup
+  const exportData = () => {
+    const data = JSON.stringify({ games, activeGameId }, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `homegame-backup-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Import data from JSON backup
+  const importData = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const imported = JSON.parse(event.target.result);
+        if (!imported.games || !Array.isArray(imported.games)) {
+          setSaveError("Invalid backup file — no games found.");
+          setTimeout(() => setSaveError(null), 4000);
+          return;
+        }
+        setConfirmDialog({
+          type: "import_data", title: "Import Backup",
+          message: `This will replace all your current data with ${imported.games.length} game(s) from the backup. This cannot be undone. Continue?`,
+          onConfirm: () => {
+            setGames(imported.games);
+            setActiveGameId(imported.activeGameId || null);
+            if (imported.activeGameId) setView(VIEWS.ACTIVE);
+            setConfirmDialog(null);
+          },
+        });
+      } catch (err) {
+        setSaveError("Could not read backup file. Make sure it's a valid .json file.");
+        setTimeout(() => setSaveError(null), 4000);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
 
   const startGame = () => {
     if (!newGame.name.trim()) return;
@@ -588,7 +625,7 @@ export default function PokerHomeGame() {
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
             <Button onClick={() => setConfirmDialog(null)} variant="secondary" style={{ padding: "8px 16px", fontSize: 12 }}>Cancel</Button>
             <Button onClick={confirmDialog.onConfirm} variant={confirmDialog.type === "end_game" ? "primary" : "danger"} style={{ padding: "8px 16px", fontSize: 12 }}>
-              {confirmDialog.type === "end_game" ? "End Game" : confirmDialog.type === "delete_game" ? "Delete" : "Remove"}
+              {confirmDialog.type === "end_game" ? "End Game" : confirmDialog.type === "delete_game" ? "Delete" : confirmDialog.type === "import_data" ? "Import" : "Remove"}
             </Button>
           </div>
         </div>
@@ -934,6 +971,37 @@ export default function PokerHomeGame() {
           </Card>
         </div>
       )}
+      {/* About & Disclaimer */}
+      <div style={{ marginTop: 32, textAlign: "center" }}>
+        <button onClick={() => setShowAbout(!showAbout)}
+          style={{ background: "none", border: "none", fontFamily: font, fontSize: 11, color: theme.textDim, cursor: "pointer", padding: "8px 16px", minHeight: 44, letterSpacing: "0.02em" }}>
+          {showAbout ? "\u25B2" : "\u2660"} About & Disclaimer
+        </button>
+        {showAbout && (
+          <div style={{ marginTop: 8, padding: 16, background: theme.surface, border: `1px solid ${theme.border}`, borderRadius: 12, textAlign: "left", animation: "fadeIn 0.2s ease" }}>
+            <div style={{ fontFamily: displayFont, fontSize: 15, color: theme.text, marginBottom: 10, fontWeight: 600 }}>{"\u2660\u2665\u2666\u2663"} Home Game</div>
+            <div style={{ fontFamily: font, fontSize: 11, color: theme.textDim, lineHeight: 1.8, marginBottom: 12 }}>
+              Home Game is a tracking tool for friendly poker games. It does not facilitate gambling, process payments, or handle real money. Users are responsible for ensuring compliance with local laws regarding poker home games.
+            </div>
+            <div style={{ fontFamily: font, fontSize: 11, color: theme.textDim, lineHeight: 1.8, marginBottom: 12 }}>
+              All data is stored locally on your device using your browser's storage. No personal information is collected, transmitted, or accessible by anyone else. No cookies, analytics, or third-party tracking.
+            </div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              <a href="https://greenfieldstudio.org/privacy.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 11, color: theme.accent, textDecoration: "none", borderBottom: `1px dashed ${theme.accent}40`, padding: "4px 0" }}>Privacy Policy</a>
+              <span style={{ color: theme.textDim, fontSize: 11 }}>{"\u2022"}</span>
+              <a href="mailto:GreenfieldStudio@pm.me" style={{ fontFamily: font, fontSize: 11, color: theme.accent, textDecoration: "none", borderBottom: `1px dashed ${theme.accent}40`, padding: "4px 0" }}>Contact</a>
+            </div>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+              <Button onClick={exportData} variant="secondary" style={{ fontSize: 11, padding: "8px 14px" }}>{"\u2913"} Export Backup</Button>
+              <label style={{ display: "inline-flex", alignItems: "center", padding: "8px 14px", borderRadius: 8, fontSize: 11, fontFamily: font, background: theme.surface, color: theme.text, border: `1px solid ${theme.border}`, cursor: "pointer", minHeight: 44, letterSpacing: "0.02em" }}>
+                {"\u2912"} Import Backup
+                <input type="file" accept=".json" onChange={importData} style={{ display: "none" }} />
+              </label>
+            </div>
+            <div style={{ fontFamily: font, fontSize: 10, color: theme.textDim, opacity: 0.6 }}>v1.8 {"\u2022"} Built by Greenfield Studio</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 
