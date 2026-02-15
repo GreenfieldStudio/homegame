@@ -5,16 +5,15 @@ const STORAGE_KEY = "homegame:data";
 
 async function loadData() {
   try {
-    const result = await window.storage.get(STORAGE_KEY);
-    if (result && result.value) return JSON.parse(result.value);
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
   } catch (e) { console.log("No saved data found, starting fresh"); }
   return null;
 }
 
 async function saveData(data) {
   try {
-    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(data));
-    if (!result) throw new Error("Storage write returned null");
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     return true;
   } catch (e) { console.error("Failed to save:", e); return false; }
 }
