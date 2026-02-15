@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Game — Privacy Policy & About</title>
+<meta name="description" content="Privacy policy and legal information for Home Game, a free poker session tracking tool.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111916;
+    --border: #1e2b23;
+    --text: #e8efe9;
+    --text-muted: #7a9882;
+    --text-dim: #4a6550;
+    --green: #22c55e;
+    --green-glow: rgba(34,197,94,0.15);
+    --accent: #34d399;
+    --gold: #eab308;
+    --font: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    --display: 'Playfair Display', Georgia, serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  ::selection { background: rgba(34,197,94,0.3); }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeIn 0.6s ease;
+  }
+  .suits {
+    font-size: 36px;
+    margin-bottom: 8px;
+    letter-spacing: 4px;
+  }
+  .title {
+    font-family: var(--display);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Nav back to app */
+  .back-link {
+    display: inline-block;
+    margin-bottom: 32px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .back-link:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  /* Section cards */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    animation: fadeIn 0.6s ease both;
+  }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.2s; }
+  .section:nth-child(6) { animation-delay: 0.25s; }
+
+  .section-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--green-glow);
+    border: 1px solid rgba(34,197,94,0.3);
+    text-align: center;
+    line-height: 32px;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .section h2 {
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .section p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.8;
+  }
+  .section p:last-child { margin-bottom: 0; }
+
+  .section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .section ul li {
+    position: relative;
+    padding-left: 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 8px;
+    line-height: 1.7;
+  }
+  .section ul li::before {
+    content: '♦';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-size: 10px;
+    top: 2px;
+  }
+
+  .highlight {
+    color: var(--green);
+    font-weight: 600;
+  }
+  .gold { color: var(--gold); }
+
+  /* Disclaimer box */
+  .disclaimer-box {
+    border-color: rgba(234,179,8,0.25);
+    background: rgba(234,179,8,0.04);
+  }
+  .disclaimer-box h2 { color: var(--gold); }
+
+  /* Contact card */
+  .contact-box {
+    border-color: rgba(52,211,153,0.25);
+    background: rgba(52,211,153,0.04);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    animation: fadeIn 0.6s ease 0.3s both;
+  }
+  .footer-suits {
+    font-size: 16px;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+    color: var(--text-dim);
+  }
+  .footer p {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding: 24px 16px 60px; }
+    .title { font-size: 28px; }
+    .section { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="suits">♠♥♦♣</div>
+    <div class="title">Home Game</div>
+    <div class="subtitle">Poker Session Manager</div>
+  </div>
+
+  <a href="https://greenfieldstudio.org" class="back-link">← Back to App</a>
+
+  <!-- PRIVACY POLICY -->
+  <div class="section">
+    <div class="section-icon">🔒</div>
+    <h2>Privacy Policy</h2>
+    <p>Home Game stores all your data <span class="highlight">locally on your device</span> using your browser's built-in storage. We have zero access to your information.</p>
+    <p>Specifically:</p>
+    <ul>
+      <li>No personal information is collected, transmitted, or stored on any server</li>
+      <li>No user accounts or login credentials exist</li>
+      <li>No cookies are used</li>
+      <li>No analytics, tracking pixels, or third-party scripts are loaded</li>
+      <li>No data ever leaves your device</li>
+      <li>No advertisements are served</li>
+    </ul>
+    <p>If you clear your browser's data, your game history will be erased because it only exists on your device. We recommend using the data export feature to keep backups.</p>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="section disclaimer-box">
+    <div class="section-icon">⚖</div>
+    <h2>Disclaimer</h2>
+    <p>Home Game is a <span class="gold">tracking and record-keeping tool</span> for friendly poker home games. It is designed to help groups of friends settle up at the end of a poker night.</p>
+    <p>This application:</p>
+    <ul>
+      <li>Does <strong>not</strong> facilitate gambling</li>
+      <li>Does <strong>not</strong> process, hold, or transfer any money or payments</li>
+      <li>Does <strong>not</strong> handle real money transactions of any kind</li>
+      <li>Does <strong>not</strong> operate as a gambling platform or service</li>
+    </ul>
+    <p>Users are solely responsible for ensuring that their use of this tool complies with all applicable local, state, and federal laws regarding poker home games in their jurisdiction.</p>
+    <p>Home Game is provided "as is" without warranty of any kind. The developers are not liable for any disputes, losses, or legal issues arising from the use of this tool.</p>
+  </div>
+
+  <!-- WHAT THE APP DOES -->
+  <div class="section">
+    <div class="section-icon">♠</div>
+    <h2>What Home Game Does</h2>
+    <p>Home Game helps poker night hosts track the numbers so nobody has to do math on napkins.</p>
+    <ul>
+      <li>Track buy-ins, rebuys, and cash-outs for each player during a session</li>
+      <li>Calculate optimized end-of-night settlements (fewest payments needed)</li>
+      <li>Maintain lifetime leaderboards and player statistics</li>
+      <li>Show detailed player profiles with session history, streaks, and head-to-head records</li>
+      <li>Copy settlement summaries to share with the group</li>
+    </ul>
+  </div>
+
+  <!-- DATA & STORAGE -->
+  <div class="section">
+    <div class="section-icon">💾</div>
+    <h2>Your Data</h2>
+    <p>Everything is stored in your browser's <span class="highlight">localStorage</span>. This means:</p>
+    <ul>
+      <li>Your data stays on the device where you use the app</li>
+      <li>Clearing browser data or using private/incognito mode will erase your history</li>
+      <li>Data does not sync between devices</li>
+      <li>We cannot recover lost data because we never had it</li>
+    </ul>
+    <p>We strongly recommend regularly exporting your data as a backup.</p>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="section contact-box">
+    <div class="section-icon">✉</div>
+    <h2>Contact</h2>
+    <p>Found a bug? Have a suggestion? Want to say something nice?</p>
+    <p>Reach us at <a href="mailto:GreenfieldStudio@pm.me" style="color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent);">GreenfieldStudio@pm.me</a></p>
+  </div>
+
+  <!-- OPEN SOURCE -->
+  <div class="section">
+    <div class="section-icon">⟨⟩</div>
+    <h2>Open Source</h2>
+    <p>Home Game is open source. View the code, report issues, or contribute on <a href="https://github.com/GreenfieldStudio/homegame" style="color: var(--accent); text-decoration: none; border-bottom: 1px dashed var(--accent);">GitHub</a>.</p>
+    <p>Licensed under the MIT License.</p>
+  </div>
+
+  <div class="footer">
+    <div class="footer-suits">♠♥♦♣</div>
+    <p>Home Game v1.8</p>
+    <p style="margin-top: 4px;">Built by Greenfield Studio · 2026</p>
+    <p style="margin-top: 8px; font-size: 10px; opacity: 0.5;">This page was last updated February 2026.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
