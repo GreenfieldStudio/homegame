@@ -987,7 +987,7 @@ export default function PokerHomeGame() {
               All data is stored locally on your device using your browser's storage. No personal information is collected, transmitted, or accessible by anyone else. No cookies, analytics, or third-party tracking.
             </div>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-              <a href="https://greenfieldstudio.org/privacy.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 11, color: theme.accent, textDecoration: "none", borderBottom: `1px dashed ${theme.accent}40`, padding: "4px 0" }}>Privacy Policy</a>
+              <a href="https://homegame-eight.vercel.app/privacy.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: font, fontSize: 11, color: theme.accent, textDecoration: "none", borderBottom: `1px dashed ${theme.accent}40`, padding: "4px 0" }}>Privacy Policy</a>
               <span style={{ color: theme.textDim, fontSize: 11 }}>{"\u2022"}</span>
               <a href="mailto:GreenfieldStudio@pm.me" style={{ fontFamily: font, fontSize: 11, color: theme.accent, textDecoration: "none", borderBottom: `1px dashed ${theme.accent}40`, padding: "4px 0" }}>Contact</a>
             </div>
