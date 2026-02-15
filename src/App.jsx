@@ -100,7 +100,7 @@ const Button = ({ children, onClick, variant = "primary", disabled, style: extra
 };
 
 const Input = ({ value, onChange, placeholder, style: extraStyle, type = "text", onKeyDown, onFocusCapture }) => (
-  <input type={type} value={value} onChange={e => onChange(e.target.value)} onKeyDown={onKeyDown}
+  <input type={type} inputMode={type === "number" ? "decimal" : undefined} value={value} onChange={e => onChange(e.target.value)} onKeyDown={onKeyDown}
     onFocus={onFocusCapture || undefined}
     placeholder={placeholder}
     className="hg-input"
@@ -396,6 +396,29 @@ export default function PokerHomeGame() {
         return { ...p, totalBuyIn: p.totalBuyIn + lastAmount, buyIns: [...p.buyIns, lastAmount] };
       })};
     }));
+  };
+
+  // Remove a specific rebuy (cannot remove the initial buy-in at index 0)
+  const removeRebuy = (playerId, buyInIndex) => {
+    if (buyInIndex === 0) return;
+    const player = activeGame?.players.find(p => p.id === playerId);
+    if (!player) return;
+    const amount = player.buyIns[buyInIndex];
+    setConfirmDialog({
+      type: "remove_rebuy", title: "Remove Rebuy",
+      message: `Remove the $${amount.toFixed(2)} rebuy from ${player.name}?`,
+      onConfirm: () => {
+        setGames(prev => prev.map(g => {
+          if (g.id !== activeGameId) return g;
+          return { ...g, players: g.players.map(p => {
+            if (p.id !== playerId) return p;
+            const newBuyIns = p.buyIns.filter((_, i) => i !== buyInIndex);
+            return { ...p, buyIns: newBuyIns, totalBuyIn: newBuyIns.reduce((s, b) => s + b, 0) };
+          })};
+        }));
+        setConfirmDialog(null);
+      },
+    });
   };
 
   const setCashOut = (playerId, value) => {
@@ -908,7 +931,6 @@ export default function PokerHomeGame() {
     return (
       <div style={{ minHeight: "100vh", background: theme.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20 }}>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
           @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
           @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
         `}</style>
@@ -997,7 +1019,7 @@ export default function PokerHomeGame() {
                 <input type="file" accept=".json" onChange={importData} style={{ display: "none" }} />
               </label>
             </div>
-            <div style={{ fontFamily: font, fontSize: 10, color: theme.textDim, opacity: 0.6 }}>v1.8 {"\u2022"} Built by Greenfield Studio</div>
+            <div style={{ fontFamily: font, fontSize: 10, color: theme.textDim, opacity: 0.6 }}>v1.9 {"\u2022"} Built by Greenfield Studio</div>
           </div>
         )}
       </div>
@@ -1129,7 +1151,7 @@ export default function PokerHomeGame() {
                       <div style={{ fontFamily: font, fontSize: 11, color: theme.textDim, display: "flex", flexWrap: "wrap", gap: 2, alignItems: "center" }}>
                         <span>Buy-ins: </span>
                         {p.buyIns.map((b, idx) => (
-                          <span key={idx}>
+                          <span key={idx} style={{ display: "inline-flex", alignItems: "center" }}>
                             {idx > 0 && <span> + </span>}
                             <span onClick={(e) => { e.stopPropagation(); if (p.cashOut === null) openEditBuyIn(p.id, idx, b); }}
                               style={{ cursor: p.cashOut === null ? "pointer" : "default", borderBottom: p.cashOut === null ? `1px dashed ${theme.textDim}` : "none", transition: "color 0.2s" }}
@@ -1138,6 +1160,13 @@ export default function PokerHomeGame() {
                               title={p.cashOut === null ? "Click to edit" : ""}>
                               ${b.toFixed(2)}
                             </span>
+                            {idx > 0 && p.cashOut === null && (
+                              <span onClick={(e) => { e.stopPropagation(); removeRebuy(p.id, idx); }}
+                                style={{ cursor: "pointer", color: theme.red, fontSize: 9, marginLeft: 2, opacity: 0.6, transition: "opacity 0.2s", lineHeight: 1 }}
+                                onMouseEnter={e => { e.target.style.opacity = "1"; }}
+                                onMouseLeave={e => { e.target.style.opacity = "0.6"; }}
+                                title="Remove this rebuy">{"\u2715"}</span>
+                            )}
                           </span>
                         ))}
                         <span> = ${p.totalBuyIn.toFixed(2)}</span>
@@ -1516,15 +1545,19 @@ export default function PokerHomeGame() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: theme.bg, color: theme.text, padding: "20px", maxWidth: 520, margin: "0 auto", overflowX: "hidden" }}>
+    <div style={{ minHeight: "100vh", background: theme.bg, color: theme.text, padding: "20px", paddingBottom: "env(safe-area-inset-bottom, 20px)", maxWidth: 520, margin: "0 auto", overflowX: "hidden", WebkitOverflowScrolling: "touch" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { -webkit-text-size-adjust: 100%; }
         ::selection { background: ${theme.green}40; }
         input::placeholder { color: ${theme.textDim}; }
+        input[type="number"] { -moz-appearance: textfield; }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .hg-input:focus { border-color: ${theme.green} !important; }
         select option { background: ${theme.bg}; color: ${theme.text}; }
         ::-webkit-scrollbar { width: 6px; }
